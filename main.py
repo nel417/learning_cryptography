@@ -1,3 +1,4 @@
+import math
 
 SYMBOLS: str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 !?.'
 
@@ -39,4 +40,37 @@ def crack_secret(message: str) -> None:
         # return cracked
 
 
+def transpose(message: str, key: int) -> str:
+    # each string is a column in a grid
+    cipher_text = [''] * key
+    for column in range(key):
+        current = column
+        while current < len(message):
+            cipher_text[column] += message[current]
+            current += key
+    return ''.join(cipher_text)
+
+
+def decrypt_transpose(message: str, key: int) -> str:
+    num_of_columns = int(math.ceil(len(message) / float(key)))
+    num_of_rows: int = key
+    empty_box: int = (num_of_columns * num_of_rows) - len(message)
+
+    text: list[str] = [''] * num_of_columns
+    column: int = 0
+    row: int = 0
+
+    for symbol in message:
+        text[column] += symbol
+        column += 1
+        if (column == num_of_columns) or (column == num_of_columns - 1 and row >= num_of_rows - empty_box):
+            column = 0
+            row += 1
+    return ''.join(text)
+
+
+
+
 crack_secret('NPK.MfN.!M.OfH.NN0B.fRJJJJ')
+print(transpose('Common sense is not so Common', 8) + '|')
+print(decrypt_transpose('Cenoonommstmme oo snnio s s C', 8))
